@@ -80,18 +80,25 @@ def snippet_signaling(request):
                         status=400
                     )
 
+            # if signal is to finish a call and has source/destination filled
             if call_type in 'End':
                 data['source'] = ''
                 data['destination'] = ''
+
+            # timestamp field validation
+            # as there isnt any definition about the timestamp format, the
+            # input timestamp will be ignored and we'll consider only the
+            # sql generated timestamp
+            if 'timestamp' in data:
+                data['timestamp'] = ''
 
             serializer = CallRecordSignalSnippetSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return HttpResponse('Signaling success', status=201)
             return HttpResponse(
-                "Field error - "
-                + serializer.errors,
+                "Field error - {}".format(serializer.errors),
                 status=400
             )
     except Exception as e:
-        return HttpResponse(str(e), status=400)
+        return HttpResponse(str(e), status=500)
