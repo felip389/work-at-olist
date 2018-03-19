@@ -4,6 +4,7 @@ from rest_framework.parsers import JSONParser
 from snippets.serializers import CallRecordSignalSnippetSerializer
 from snippets.models import CallRecordSignalSnippet
 import re
+from dateutil.parser import parse
 
 # Create your views here.
 
@@ -85,12 +86,21 @@ def snippet_signaling(request):
                 data['source'] = ''
                 data['destination'] = ''
 
-            # timestamp field validation
-            # as there isnt any definition about the timestamp format, the
-            # input timestamp will be ignored and we'll consider only the
-            # sql generated timestamp
-            if 'timestamp' in data:
-                data['timestamp'] = ''
+            # if user fills timestamp in, it should not have a negative
+            # time delta from start to end
+            # timestamp format iso 8601 combined date and time in UTC
+            if call_type in 'End':
+                if 'timestamp' in data:
+                    dts = snippet_call_start.values_list('timestamp').get()[0]
+                    dte = data.get('timestamp')
+                    dte = parse(dte)
+                    if dte < dts:
+                        return HttpResponse(
+                            'timing error - call timing error, cannot signal'
+                            + ' call end with a timestamp earlier than call'
+                            + ' start',
+                            status=400
+                        )
 
             serializer = CallRecordSignalSnippetSerializer(data=data)
             if serializer.is_valid():
