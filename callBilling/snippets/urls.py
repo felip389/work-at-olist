@@ -4,5 +4,5 @@ from snippets import views
 
 app_name = 'snippets'
 urlpatterns = [
-    url('signaling/', views.snippet_signaling)
+    url('', views.snippet_signaling)
 ]

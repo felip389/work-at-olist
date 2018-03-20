@@ -2,7 +2,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from rest_framework.parsers import JSONParser
 from snippets.serializers import CallRecordSignalSnippetSerializer
-from dataprocessing.SignalResult import SignalResult
 from dataprocessing.SignalValidator import SignalValidator
 
 # Create your views here.
