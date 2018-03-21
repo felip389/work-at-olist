@@ -16,7 +16,7 @@ class BillCalculator:
     def get_bill(self, source, year, month):
         call_ids = self.get_month_call_ids(source, year, month)
         call_details_list = self.get_call_list(call_ids)
-
+        self.calculate_bill(call_details_list)
         return call_details_list
 
     def get_month_call_ids(self, source, year, month):
@@ -37,8 +37,17 @@ class BillCalculator:
             end_year = int(year)
             end_month = int(month) + 1
 
-        start_timestamp = datetime(int(year), int(month), 1, 0, 0, 0, 0,
+        if month is 1:
+            previous_year = int(year) - 1
+            previous_month = 12
+        else:
+            previous_year = int(year)
+            previous_month = int(month) - 1
+
+        start_timestamp = datetime(previous_year, previous_month, 1, 0, 0, 0, 0,
                                    timezone('America/Sao_Paulo'))
+        actual_timestamp = datetime(int(year), int(month), 1, 0, 0, 0, 0,
+                                    timezone('America/Sao_Paulo'))
         end_timestamp = datetime(end_year, end_month, 1, 0, 0, 0, 0,
                                  timezone('America/Sao_Paulo'))
         source_call_signals = CallRecordSignalSnippet.objects.filter(
@@ -50,8 +59,16 @@ class BillCalculator:
         source_call_ids = source_call_signals.values('call_id')
         call_ids = []
         for i in range(0, source_call_ids.count()):
-            call_ids.append(
-                source_call_signals.values('call_id')[i]['call_id'])
+            s = CallRecordSignalSnippet.objects.filter(
+                call_id=source_call_ids[i]['call_id'],
+                callType='End'
+            )
+            if s.count() > 0:
+                timestamp_aux = s.values('timestamp')[0]['timestamp']
+                if timestamp_aux > actual_timestamp:
+                    if timestamp_aux < end_timestamp:
+                        call_ids.append(
+                            s.values('call_id')[0]['call_id'])
         return call_ids
 
     def get_call_list(self, call_ids):
@@ -69,7 +86,7 @@ class BillCalculator:
                 invalid_msg = 'Invalid start signal or missing call_id ' + i
                 is_valid = False
             else:
-                invalid_msg = 'Invalid signal pair - multiple start entrances'
+                invalid_msg = 'Invalid signal pair - multiple start entries'
                 is_valid = False
 
             if not is_valid:
@@ -93,7 +110,7 @@ class BillCalculator:
                 invalid_msg = 'Unfinished call'
                 is_valid = False
             else:
-                invalid_msg = 'Invalid signal pair - multiple end entrances'
+                invalid_msg = 'Invalid signal pair - multiple end entries'
                 is_valid = False
 
             if is_valid:
@@ -193,3 +210,17 @@ class BillCalculator:
                 it.set_call_price(price)
             else:
                 continue
+
+    def generate_log(self, call_list, debug):
+        log = []
+        for i in call_list:
+            if i.is_valid():
+                txt = 'aew'
+                log.append(txt)
+            else:
+                if debug in ('true', 'True'):
+                    txt = str(i.get_call_id())
+                    txt += ' - '
+                    txt += i.get_invalid_msg()
+                    log.append(txt)
+        return log
