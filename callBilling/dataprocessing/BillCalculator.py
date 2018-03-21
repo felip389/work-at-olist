@@ -130,47 +130,36 @@ class BillCalculator:
                 time_stop = it.get_end()
                 day_iterator = 0
                 i = 0
-                print('ponto 0')
                 while time_iterator < time_stop:
                     if time_iterator.day == time_stop.day:
                         if time_iterator.hour < standard_call_charge_time:
-                            print('a')
                             aux_call_charge = reduced_call_charge_hourly
                             if time_stop.hour < standard_call_charge_time:
-                                print('a1')
                                 aux_call_charge_hour = time_stop.hour
                                 aux_call_charge_minute = time_stop.minute
                             else:
-                                print('a2')
                                 aux_call_charge_hour = standard_call_charge_time
                                 aux_call_charge_minute = 0
                         elif time_iterator.hour < reduced_call_charge_time:
-                            print('b')
                             aux_call_charge = standard_call_charge_hourly
                             if time_stop.hour < reduced_call_charge_time:
-                                print('b1')
                                 aux_call_charge_hour = time_stop.hour
                                 aux_call_charge_minute = time_stop.minute
                             else:
-                                print('b2')
                                 aux_call_charge_hour = reduced_call_charge_time
                                 aux_call_charge_minute = 0
                         else:
-                            print('c')
                             aux_call_charge = reduced_call_charge_hourly
                             aux_call_charge_hour = time_stop.hour
                             aux_call_charge_minute = time_stop.minute
                     else:
                         if time_iterator.hour < standard_call_charge_time:
-                            print('d1')
                             aux_call_charge = reduced_call_charge_hourly
                             aux_call_charge_hour = standard_call_charge_time
                         elif time_iterator.hour < reduced_call_charge_time:
-                            print('d2')
                             aux_call_charge = standard_call_charge_hourly
                             aux_call_charge_hour = reduced_call_charge_time
                         else:
-                            print('d3')
                             aux_call_charge = reduced_call_charge_hourly
                             aux_call_charge_hour = 0
                             day_iterator += 1
@@ -199,8 +188,6 @@ class BillCalculator:
 
                     aux_delta_time = time_aux - time_iterator
                     aux_delta_time_minutes = aux_delta_time.seconds / 60
-                    print(aux_delta_time)
-                    print(aux_call_charge)
                     price += aux_call_charge * aux_delta_time_minutes
                     time_iterator = time_aux
                 it.set_call_price(price)
