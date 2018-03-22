@@ -12,7 +12,7 @@ django-heroku = "*"
 djangorestframework = "*"
 python-dateutil = "*"
 pygments = "*"
-psycopg2 = "*"
+psycopg2-binary = "*"
 
 [requires]
 
