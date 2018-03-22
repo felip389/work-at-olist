@@ -19,25 +19,38 @@ class BillCalculator:
         self.calculate_bill(call_details_list)
         return call_details_list
 
-    def get_month_call_ids(self, source, year, month):
-
-        src_re = re.match(r'\d{10,11}', source)
+    def check_input(self, source, year, month):
+        src_re = re.match(r'^\d{10,11}$', source)
         if src_re is None:
-            return
-        year_re = re.match(r'\d{4}', year)
+            return True
+        year_re = re.match(r'^\d{4}$', year)
         if year_re is None:
-            return
-        month_re = re.match(r'\d{1,2}', month)
+            return True
+        month_re = re.match(r'^\d{1,2}$', month)
         if month_re is None:
-            return
-        if month is 12:
+            return True
+        if int(month) == 0 or int(month) > 12:
+            return True
+        return False
+
+    def check_date(self, year, month):
+        now = datetime.now()
+        if int(year) > now.year:
+            return True
+        elif int(year) == now.year:
+            if int(month) >= now.month:
+                return True
+        return False
+
+    def get_month_call_ids(self, source, year, month):
+        if int(month) is 12:
             end_year = int(year) + 1
             end_month = 1
         else:
             end_year = int(year)
             end_month = int(month) + 1
 
-        if month is 1:
+        if int(month) is 1:
             previous_year = int(year) - 1
             previous_month = 12
         else:

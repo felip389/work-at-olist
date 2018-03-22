@@ -34,7 +34,15 @@
         </tr>
     </table>
 {% else %}
-    <p>No calls recorded on period.</p>
+    {% if period_error %}
+        <p>Invalid period.</p>
+    {% else %}
+        {% if input_error %}
+            <p>Input error.</p>
+        {% else %}
+            <p>No calls recorded on period.</p>
+        {% endif %}
+    {% endif %}
 {% endif %}
 </body>
 </html>

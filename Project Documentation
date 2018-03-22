@@ -1,0 +1,70 @@
+Project Description
+
+    This project consists in 2 apps. The first one (called snippets) is res-
+ponsible for the HTTP REST API, which allows signaling from calls to be re-
+corded on the project database. The second app (called billing) is responsi-
+ble for the front-end and all the data processing; this app will filter the
+required data from database, do every needed calculation, and finally show
+the detailed bill on its front-end.
+    Some considerations concerning the REST API:
+    -The API will not accept any payload with recordId which exists at the
+    database.
+    -The API will check payload's callType and will only accept 'Start' and
+    'End' exactly.
+    -Concerning to call_id:
+        *if there is already a payload with the same callType and same call_id,
+        the new payload will be refused.
+        *if a payload callType is 'End', but there is no 'Start' for the same
+        call_id, the payload will be refused.
+    -Both source and destination numbers have the same pattern, 2 digits for
+    area code and 8 or 9 digits for the phone number, therefore any value bigger
+    than 11 or smaller than 10 will be refused.
+    -API will not accept a timestamp on an 'End' payload if the 'Start' payload
+    has an older timestamp.
+    -API will not accept a 'Start' payload if it doesn't have source and desti-
+    nation info.
+
+
+Installing
+
+    In order to install this project locally, there are a few packages which
+should be installed. Those are:
+    -Python3.5+
+        -Python pip3
+        -Python-Django framework
+        -Python_rest_framework
+    -Postgresql 9.1+
+        -psycopg2
+    On psql a table named 'callbilling' should be created and a user to be
+used to access this table through django framework (configurable under call-
+Billing/callBilling/settings.py DATABASES). Ex (used access on dev).:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'callbilling',
+        'USER': 'felipe',
+        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',
+    }
+}
+
+
+Testing
+
+    There is an automated test for the bill calculations algorythm, to run it
+go to the project main folder '../callBilling/' and run:
+
+sudo python3 manage.py shell
+>> from dataprocessing import tests
+>> testes.shell_test_calculate_bill()
+
+
+Environment
+
+    The development environment used to run this project was a VM with ubuntu
+14.04 LTS with GUI, and the IDE is pycharm community edition. The VM runs on
+virtual box under a windows 10, and on the vm's configuration, the LAN board
+was set as bridged, so this OS could connect itself to the LAN and be accessible
+from its host. On host side, google chrome was used to test the front-end inter-
+face and postman was used to test the HTTP REST API.

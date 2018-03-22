@@ -27,7 +27,7 @@ class SignalValidator:
         call_type = data.get('callType')
         if call_type not in ('Start', 'End'):
             e.set_result(
-                'allType error - invalid field',
+                'callType error - invalid field',
                 400,
                 False
             )
