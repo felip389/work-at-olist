@@ -11,22 +11,27 @@ def source_billing(request):
     source = request.GET.get('source', '')
     year = request.GET.get('year', '')
     month = request.GET.get('month', '')
-    debug = request.GET.get('debug', '')
     b = BillCalculator()
-
-    call_list = b.get_bill(source, year, month)
     try:
-        log = b.generate_log(call_list, debug)
+
+        call_list = b.get_bill(source, year, month)
 
     except Exception as e:
         return HttpResponse(str(e))
 
     title = year + '/' + month + ' - ' + source
 
+    total_price = 0
+    for call in call_list:
+        total_price += call.get_call_price_float()
+    total_price = 'R$ %.2f' % total_price
+
     template = loader.get_template('billing/bill.html')
     context = {
-        'log': log,
-        'title': title
+        'call_list': call_list,
+        'title': title,
+        'total_price': total_price
     }
 
     return HttpResponse(template.render(context, request))
+

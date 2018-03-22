@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 class BillCalculator:
 
     def __init__(self):
-        self.tz = ''
+        self.tz = timezone('America/Sao_Paulo')
 
     def set_tz(self, tz):
         self.tz = tz
@@ -143,6 +143,7 @@ class BillCalculator:
         for it in call_details_list:
             if it.is_valid():
                 price = standing_charge
+                time = 0
                 time_iterator = it.get_start()
                 time_stop = it.get_end()
                 day_iterator = 0
@@ -206,21 +207,9 @@ class BillCalculator:
                     aux_delta_time = time_aux - time_iterator
                     aux_delta_time_minutes = aux_delta_time.seconds / 60
                     price += aux_call_charge * aux_delta_time_minutes
+                    time += aux_delta_time.seconds
                     time_iterator = time_aux
                 it.set_call_price(price)
+                it.set_call_time(time)
             else:
                 continue
-
-    def generate_log(self, call_list, debug):
-        log = []
-        for i in call_list:
-            if i.is_valid():
-                txt = 'aew'
-                log.append(txt)
-            else:
-                if debug in ('true', 'True'):
-                    txt = str(i.get_call_id())
-                    txt += ' - '
-                    txt += i.get_invalid_msg()
-                    log.append(txt)
-        return log

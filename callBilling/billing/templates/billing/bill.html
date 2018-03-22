@@ -5,14 +5,34 @@
     <title> {{ title }} </title>
 </head>
 <body>
-{%if log %}
-    <ul>
-        {% for i in log %}
-            <li>
-                {{ i }}
-            </li>
+{%if call_list %}
+    <table style="width:100%">
+        <tr>
+            <th>Destination</th>
+            <th>Call start date</th>
+            <th>Call start time</th>
+            <th>Call Duration</th>
+            <th>Call Price</th>
+        </tr>
+        {% for i in call_list %}
+            {% if i.is_valid %}
+                <tr>
+                    <th> {{i.get_destination}} </th>
+                    <th> {{i.get_date}} </th>
+                    <th> {{i.get_time}} </th>
+                    <th> {{i.get_parsed_call_time}} </th>
+                    <th> R$ {{i.get_call_price}} </th>
+                </tr>
+            {% endif %}
         {% endfor %}
-    </ul>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>Total: {{total_price}}</th>
+        </tr>
+    </table>
 {% else %}
     <p>No calls recorded on period.</p>
 {% endif %}

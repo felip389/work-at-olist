@@ -10,6 +10,7 @@ class CallDetails:
         self.source = 0
         self.destination = 0
         self.call_price = 0
+        self.time = 0
 
     def set_values(self, call_id, start, end, source, destination):
         self.call_id = call_id
@@ -47,7 +48,30 @@ class CallDetails:
         return self.invalid_msg
 
     def get_call_price(self):
+        string = '%.2f' % self.call_price
+        return string
+
+    def get_call_price_float(self):
         return self.call_price
 
     def set_call_price(self, price):
         self.call_price = price
+
+    def set_call_time(self, time):
+        self.time = time
+
+    def get_parsed_call_time(self):
+        hours = int(self.time / 3600)
+        minutes = int((self.time / 60) % 60)
+        seconds = self.time % 60
+        string = str(hours) + 'h' + str(minutes) + 'm' + str(seconds) + 's'
+        return string
+
+    def get_date(self):
+        string = str(self.start.year) + '-' + str(self.start.month)
+        string += '-' + str(self.start.day)
+        return string
+
+    def get_time(self):
+        string = str(self.start.hour) + ':' + str(self.start.minute)
+        return string

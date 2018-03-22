@@ -78,5 +78,5 @@ def shell_test_calculate_bill():
 
     for i in range(0, len(cd_list)):
         msg = 'Call ' + str(i) + ' should cost ' + str(real_price[i])
-        msg += ' and it costs ' + str('%.2f.' % cd_list[i].get_call_price())
+        msg += ' and it costs ' + cd_list[i].get_call_price()
         print(msg)
