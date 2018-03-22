@@ -29,10 +29,12 @@ Installing
 
     In order to install this project locally, there are a few packages which
 should be installed. Those are:
-    -Python3.5+
-        -Python pip3
+    -Python3.6.4
         -Python-Django framework
         -Python_rest_framework
+        -python-dateutil
+        -pygments
+
     -Postgresql 9.1+
         -psycopg2
     On psql a table named 'callbilling' should be created and a user to be
