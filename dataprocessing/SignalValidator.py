@@ -97,19 +97,29 @@ class SignalValidator:
             data['source'] = ''
             data['destination'] = ''
 
+        # timestamp format iso 8601 combined date and time
+
+        dte = data.get('timestamp')
+        dte_re = re.match(r'^\d{4}-\d\d-\d\d.\d\d:\d\d:\d\d(.\d{1,6})?[+-]\d\d:\d\d$', dte)
+        dte = parse(dte)
+        if dte_re is None:
+            e.set_result(
+                'timestamp error - Invalid timestamp',
+                400,
+                False
+            )
+            return e
+
         # if user fills timestamp in, it should not have a negative
         # time delta from start to end
-        # timestamp format iso 8601 combined date and time in UTC
         if call_type in 'End':
             if 'timestamp' in data:
                 dts = snippet_call_start.values_list('timestamp').get()[0]
-                dte = data.get('timestamp')
-                dte = parse(dte)
                 if dte < dts:
                     e.set_result(
                         'timing error - call timing error, cannot signal'
                         + ' call end with a timestamp earlier than call'
-                        + ' start',
+                        + ' start' + str(dte) + ' ' + str(dts),
                         400,
                         False
                     )
