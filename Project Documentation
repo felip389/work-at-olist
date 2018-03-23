@@ -55,7 +55,7 @@ DATABASES = {
 Testing
 
     There is an automated test for the bill calculations algorythm, to run it
-go to the project main folder '../callBilling/' and run:
+go to the project main folder '../work-at-olist/' and run:
 
 sudo python3 manage.py shell
 >> from dataprocessing import tests
