@@ -101,7 +101,6 @@ class SignalValidator:
 
         dte = data.get('timestamp')
         dte_re = re.match(r'^\d{4}-\d\d-\d\d.\d\d:\d\d:\d\d(.\d{1,6})?[+-]\d\d:\d\d$', dte)
-        dte = parse(dte)
         if dte_re is None:
             e.set_result(
                 'timestamp error - Invalid timestamp',
@@ -109,6 +108,7 @@ class SignalValidator:
                 False
             )
             return e
+        dte = parse(dte)
 
         # if user fills timestamp in, it should not have a negative
         # time delta from start to end
@@ -119,7 +119,7 @@ class SignalValidator:
                     e.set_result(
                         'timing error - call timing error, cannot signal'
                         + ' call end with a timestamp earlier than call'
-                        + ' start' + str(dte) + ' ' + str(dts),
+                        + ' start',
                         400,
                         False
                     )

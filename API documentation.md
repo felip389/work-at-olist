@@ -71,6 +71,11 @@
   OR
 
   * **Code:** 400 Bad Request <br/>
+    **Content:** 'timestamp error - Invalid timestamp'
+
+  OR
+
+  * **Code:** 400 Bad Request <br/>
     **Content:** 'timing error call timing error, cannot signal
     call end with a timestamp earlier than call start'
 
