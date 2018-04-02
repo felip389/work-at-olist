@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'snippets.apps.SnippetsConfig',
+    'signaling.apps.SignalingConfig',
     'billing.apps.BillingConfig',
     'rest_framework',
     'django.contrib.admin',

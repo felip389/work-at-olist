@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from snippets.models import CallRecordSignalSnippet
+from signaling.models import CallRecordSignal
 
 
-class CallRecordSignalSnippetSerializer(serializers.ModelSerializer):
+class CallRecordSignalSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CallRecordSignalSnippet
+        model = CallRecordSignal
         fields = (
             'recordId',
             'callType',

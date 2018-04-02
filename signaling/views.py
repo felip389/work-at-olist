@@ -1,14 +1,14 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from rest_framework.parsers import JSONParser
-from snippets.serializers import CallRecordSignalSnippetSerializer
+from signaling.serializers import CallRecordSignalSerializer
 from dataprocessing.SignalValidator import SignalValidator
 
 # Create your views here.
 
 
 @csrf_exempt
-def snippet_signaling(request):
+def signaling(request):
     try:
         if request.method == 'PUT':
             data = JSONParser().parse(request)
@@ -19,7 +19,7 @@ def snippet_signaling(request):
                     e.get_msg(),
                     status=e.get_http_code()
                 )
-            serializer = CallRecordSignalSnippetSerializer(data=data)
+            serializer = CallRecordSignalSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return HttpResponse(e.get_msg(), status=e.get_http_code())

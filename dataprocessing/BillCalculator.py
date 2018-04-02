@@ -1,4 +1,4 @@
-from snippets.models import CallRecordSignalSnippet
+from signaling.models import CallRecordSignal
 import re
 from pytz import timezone
 from dataprocessing.CallDetails import CallDetails
@@ -63,7 +63,7 @@ class BillCalculator:
                                     timezone('America/Sao_Paulo'))
         end_timestamp = datetime(end_year, end_month, 1, 0, 0, 0, 0,
                                  timezone('America/Sao_Paulo'))
-        source_call_signals = CallRecordSignalSnippet.objects.filter(
+        source_call_signals = CallRecordSignal.objects.filter(
             source=source,
             callType='Start',
             timestamp__gte=start_timestamp,
@@ -72,7 +72,7 @@ class BillCalculator:
         source_call_ids = source_call_signals.values('call_id')
         call_ids = []
         for i in range(0, source_call_ids.count()):
-            s = CallRecordSignalSnippet.objects.filter(
+            s = CallRecordSignal.objects.filter(
                 call_id=source_call_ids[i]['call_id'],
                 callType='End'
             )
@@ -89,7 +89,7 @@ class BillCalculator:
         call_details_list = []
         for i in call_ids:
             invalid_msg = ''
-            start_call_signal = CallRecordSignalSnippet.objects.filter(
+            start_call_signal = CallRecordSignal.objects.filter(
                 call_id=i,
                 callType='Start'
             )
@@ -112,7 +112,7 @@ class BillCalculator:
             destination = start_call_signal.values('destination')[0]['destination']
             start = start_call_signal.values('timestamp')[0]['timestamp']
 
-            end_call_signal = CallRecordSignalSnippet.objects.filter(
+            end_call_signal = CallRecordSignal.objects.filter(
                 call_id=i,
                 callType='End'
             )

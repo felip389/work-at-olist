@@ -9,7 +9,7 @@ STYLE_CHOICES = sorted((item, item) for item in get_all_styles())
 
 # Create your models here.
 
-class CallRecordSignalSnippet(models.Model):
+class CallRecordSignal(models.Model):
     recordId = models.IntegerField(default=0)
     callType = models.CharField(max_length=5, default='')
     call_id = models.IntegerField(default=0)

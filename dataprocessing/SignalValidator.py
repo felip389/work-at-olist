@@ -1,4 +1,4 @@
-from snippets.models import CallRecordSignalSnippet
+from signaling.models import CallRecordSignal
 import re
 from dateutil.parser import parse
 from dataprocessing.SignalResult import SignalResult
@@ -29,10 +29,10 @@ class SignalValidator:
             )
             return e
 
-        snippet = CallRecordSignalSnippet.objects.filter(
+        signal = CallRecordSignal.objects.filter(
             recordId=record_id
         )
-        if snippet.count() is not 0:
+        if signal.count() is not 0:
             e.set_result(
                 'id error - an id already exists',
                 400,
@@ -94,17 +94,17 @@ class SignalValidator:
                 )
                 return e
 
-        snippet_call_end = CallRecordSignalSnippet.objects.filter(
+        signal_call_end = CallRecordSignal.objects.filter(
             call_id=call_id,
             callType='End',
         )
-        snippet_call_start = CallRecordSignalSnippet.objects.filter(
+        signal_call_start = CallRecordSignal.objects.filter(
             call_id=call_id,
             callType='Start',
         )
 
         # case 1: call is already finished
-        if snippet_call_end.count() is not 0:
+        if signal_call_end.count() is not 0:
             e.set_result(
                 'call_id error - Call already finished',
                 400,
@@ -113,7 +113,7 @@ class SignalValidator:
             return e
 
         # case 2: call was started and not yet finished
-        if snippet_call_start.count() is not 0:
+        if signal_call_start.count() is not 0:
             if data.get(callType_name) in 'Start':
                 e.set_result(
                     'call_id error - Call already started',
@@ -123,7 +123,7 @@ class SignalValidator:
                 return e
 
         # case 3: call was not started and user wants do finish
-        if snippet_call_start.count() is 0:
+        if signal_call_start.count() is 0:
             if data.get(callType_name) in 'End':
                 e.set_result(
                     'call_id error - Call was not started',
@@ -173,7 +173,7 @@ class SignalValidator:
         # time delta from start to end
         if call_type in 'End':
             if 'timestamp' in data:
-                dts = snippet_call_start.values_list('timestamp').get()[0]
+                dts = signal_call_start.values_list('timestamp').get()[0]
                 if dte < dts:
                     e.set_result(
                         'timing error - call timing error, cannot signal'

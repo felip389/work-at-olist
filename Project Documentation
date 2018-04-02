@@ -1,6 +1,6 @@
 Project Description
 
-    This project consists in 2 apps. The first one (called snippets) is res-
+    This project consists in 2 apps. The first one (called signaling) is res-
 ponsible for the HTTP REST API, which allows signaling from calls to be re-
 corded on the project database. The second app (called billing) is responsi-
 ble for the front-end and all the data processing; this app will filter the
