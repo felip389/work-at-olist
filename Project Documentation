@@ -6,23 +6,23 @@ corded on the project database. The second app (called billing) is responsi-
 ble for the front-end and all the data processing; this app will filter the
 required data from database, do every needed calculation, and finally show
 the detailed bill on its front-end.
-    Some considerations concerning the REST API:
-    -The API will not accept any payload with recordId which exists at the
-    database.
-    -The API will check payload's callType and will only accept 'Start' and
-    'End' exactly.
-    -Concerning to call_id:
-        *if there is already a payload with the same callType and same call_id,
-        the new payload will be refused.
-        *if a payload callType is 'End', but there is no 'Start' for the same
-        call_id, the payload will be refused.
-    -Both source and destination numbers have the same pattern, 2 digits for
-    area code and 8 or 9 digits for the phone number, therefore any value bigger
-    than 11 or smaller than 10 will be refused.
-    -API will not accept a timestamp on an 'End' payload if the 'Start' payload
-    has an older timestamp.
-    -API will not accept a 'Start' payload if it doesn't have source and desti-
-    nation info.
+    The billing app is hardcoded to calculate the bill for "America/Sao_Paulo"
+timezone. User must give the signaling timestamp from wherever he signals,
+and although the app needs the timezone from the incoming signal, the billing
+output will be calculated with "America/Sao_Paulo" timezone.
+    There are some ids reserved for automated tests:
+    -id: from 0 to 100 are reserved for system testing
+    -call_id: from 0 to 50 are reserved for system testing
+
+API
+
+    Signaling
+
+    <host>/signaling/
+
+    Billing
+
+    <host>/billing/bill
 
 
 Installing
@@ -34,12 +34,16 @@ should be installed. Those are:
         -Python_rest_framework
         -python-dateutil
         -pygments
+        -gunicorn
+        -python-decouple
+        -whitenoise
+        -dj-database-url
+        -dj-static
+        -psycopg2-binary
 
-    -Postgresql 9.1+
-        -psycopg2
     On psql a table named 'callbilling' should be created and a user to be
-used to access this table through django framework (configurable under call-
-Billing/callBilling/settings.py DATABASES). Ex (used access on dev).:
+used to access this table through django framework (configurable under work-
+at-olist/callBilling/settings.py DATABASES). Ex (used access on dev).:
 
 DATABASES = {
     'default': {
@@ -54,12 +58,48 @@ DATABASES = {
 
 Testing
 
-    There is an automated test for the bill calculations algorythm, to run it
+    There is an automated test for the bill calculations algorithm, to run it
 go to the project main folder '../work-at-olist/' and run:
 
 sudo python3 manage.py shell
 >> from dataprocessing import tests
 >> testes.shell_test_calculate_bill()
+
+
+Fields validation
+
+    Signaling payload
+
+    -id: must be an integer, and each given id must be unique, system will check
+    database for each given id for duplicates. Values within 0 and 100 are reser-
+    ved for automated testing.
+    -callType: must be a string, and system will check for 2 types, "Start" and
+    "End" exactly.
+    -call_id: must be an integer, and it is an id which represents the call
+    itself. For a same call_id, the signaling will be accepted if:
+        1- callType is "Start" and call_id was not initiated;
+        2- callType is "End" and there is another signal with same call_id and
+        callType "Start"
+        3- if there are already both call types for a call_id, no further sig-
+        naling is allowed for the same call_id
+    Values within 0 and 50 are reserved for automated testing.
+    -timestamp: the timestamp will have to follow this format:
+            'YYYY-MM-DD hh:mm:ss-hh:mm'
+    regex: "^\d{4}-\d\d-\d\d.\d\d:\d\d:\d\d[+-]\d\d:\d\d$"
+    Any timestamp will be accepted for "Start" calls, but for "End" calls, vali-
+    dator will check first if the call was already started for the same call_id
+    and afterwards it'll check if the "Start" timestamp is older than the "End"
+    one.
+    -'source' and 'destination': must be a string, it'll be check for only num-
+    bers and 10 or 11 digits. These fields are optional for the "End" call type
+    as it will be nullified at the validator, but these fields are mandatory
+    when the call type is "Start"
+
+    Billing
+
+    -source: must be a string with 10 or 11 numbers
+    -year: must be a string with 4 numbers
+    -month: must be a string with 1 or 2 numbers
 
 
 Environment

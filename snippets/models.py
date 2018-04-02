@@ -13,7 +13,7 @@ class CallRecordSignalSnippet(models.Model):
     recordId = models.IntegerField(default=0)
     callType = models.CharField(max_length=5, default='')
     call_id = models.IntegerField(default=0)
-    timestamp = models.DateTimeField(auto_now_add=False, blank=True)
+    timestamp = models.DateTimeField()
     source = models.CharField(max_length=11, default='', blank=True)
     destination = models.CharField(max_length=11, default='', blank=True)
 

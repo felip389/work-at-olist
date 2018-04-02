@@ -21,27 +21,47 @@
   'recordId=[integer]'
   'callType=[string]'
   'call_id=[integer]'
+  'timestamp=[timestamp]'
 
   **Optional:**
 
   'source=[string]'
   'destination=[string]'
-  'timestamp=[timestamp]'
 
 * **Success Response:**
 
-  * **Code:** 200 <br/>
+  * **Code:** 201 <br/>
     **Content:** 'signaling success'
 
 * **Error Response:**
 
   * **Code:** 400 Bad Request <br/>
-    **Content:** 'recordId error - a recordId already exists'
+    **Content:** 'id error - input id is not a number'
+
+  OR
+
+  * **Code:** 400 Bad Request <br/>
+    **Content:** 'id error - an id already exists'
+
+  OR
+
+  * **Code:** 400 Bad Request <br/>
+    **Content:** 'id error - ids from 0 to 100 are reserved'
 
   OR
 
   * **Code:** 400 Bad Request <br/>
     **Content:** 'callType error - invalid field'
+
+  OR
+
+  * **Code:** 400 Bad Request <br/>
+    **Content:** 'call_id error - input call_id is not a number'
+
+  OR
+
+  * **Code:** 400 Bad Request <br/>
+    **Content:** 'call_id error - ids from 0 to 50 are reserved'
 
   OR
 
@@ -84,6 +104,7 @@
     "recordId": 36,
     "callType": "End",
     "call_id": 19
+    "timestamp": "2018-01-04 18:31:38-03:00"
 }
 
 -----------

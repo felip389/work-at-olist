@@ -6,25 +6,58 @@ from dataprocessing.SignalResult import SignalResult
 
 class SignalValidator:
 
-    def validate(self, data):
+    def validate(self, data, test):
         e = SignalResult()
+
+        record_id_name = 'id'
+        call_id_name = 'call_id'
+        callType_name = 'callType'
+        source_name = 'source'
+        destination_name = 'destination'
+
 
         # input block validation
         # recordId field validation
-        record_id = data.get('recordId')
-        snippet = CallRecordSignalSnippet.objects.filter(
-            recordId=record_id
-        )
-        if snippet.count() is not 0:
+        record_id = data.get(record_id_name)
+        try:
+            record_id = int(record_id)
+        except ValueError:
             e.set_result(
-                'recordId error - a recordId already exists',
+                'id error - input id is not a number',
                 400,
                 False
             )
             return e
 
+        snippet = CallRecordSignalSnippet.objects.filter(
+            recordId=record_id
+        )
+        if snippet.count() is not 0:
+            e.set_result(
+                'id error - an id already exists',
+                400,
+                False
+            )
+            return e
+        if test is False:
+            if record_id <= 100:
+                e.set_result(
+                    'id error - ids from 0 to 100 are reserved',
+                    400,
+                    False
+                )
+                return e
+        else:
+            if record_id > 100:
+                e.set_result(
+                    'id error - ids starting from 100 are reserved for production',
+                    400,
+                    False
+                )
+                return e
+
         # callType field validation
-        call_type = data.get('callType')
+        call_type = data.get(callType_name)
         if call_type not in ('Start', 'End'):
             e.set_result(
                 'callType error - invalid field',
@@ -34,7 +67,33 @@ class SignalValidator:
             return e
 
         # call_id field validation
-        call_id = data.get('call_id')
+        call_id = data.get(call_id_name)
+        try:
+            call_id = int(call_id)
+        except ValueError:
+            e.set_result(
+                'call_id error - input call_id is not a number',
+                400,
+                False
+            )
+            return e
+        if test is False:
+            if record_id <= 50:
+                e.set_result(
+                    'call_id error - ids from 0 to 50 are reserved',
+                    400,
+                    False
+                )
+                return e
+        else:
+            if record_id > 50:
+                e.set_result(
+                    'call_id error - ids starting from 50 are reserved for production',
+                    400,
+                    False
+                )
+                return e
+
         snippet_call_end = CallRecordSignalSnippet.objects.filter(
             call_id=call_id,
             callType='End',
@@ -55,7 +114,7 @@ class SignalValidator:
 
         # case 2: call was started and not yet finished
         if snippet_call_start.count() is not 0:
-            if data.get('callType') in 'Start':
+            if data.get(callType_name) in 'Start':
                 e.set_result(
                     'call_id error - Call already started',
                     400,
@@ -65,7 +124,7 @@ class SignalValidator:
 
         # case 3: call was not started and user wants do finish
         if snippet_call_start.count() is 0:
-            if data.get('callType') in 'End':
+            if data.get(callType_name) in 'End':
                 e.set_result(
                     'call_id error - Call was not started',
                     400,
@@ -75,8 +134,8 @@ class SignalValidator:
 
         # source and destination fields validation
         if call_type in 'Start':
-            src_re = re.match(r'\d{10,11}', data.get('source'))
-            dst_re = re.match(r'\d{10,11}', data.get('destination'))
+            src_re = re.match(r'\d{10,11}', data.get(source_name))
+            dst_re = re.match(r'\d{10,11}', data.get(destination_name))
             if src_re is None:
                 e.set_result(
                     'source error - Invalid source',
@@ -94,13 +153,13 @@ class SignalValidator:
 
         # if signal is to finish a call and has source/destination filled
         if call_type in 'End':
-            data['source'] = ''
-            data['destination'] = ''
+            data[source_name] = ''
+            data[destination_name] = ''
 
         # timestamp format iso 8601 combined date and time
 
         dte = data.get('timestamp')
-        dte_re = re.match(r'^\d{4}-\d\d-\d\d.\d\d:\d\d:\d\d(.\d{1,6})?[+-]\d\d:\d\d$', dte)
+        dte_re = re.match(r'^\d{4}-\d\d-\d\d.\d\d:\d\d:\d\d[+-]\d\d:\d\d$', dte)
         if dte_re is None:
             e.set_result(
                 'timestamp error - Invalid timestamp',

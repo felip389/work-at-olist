@@ -13,7 +13,7 @@ def snippet_signaling(request):
         if request.method == 'PUT':
             data = JSONParser().parse(request)
             validator = SignalValidator()
-            e = validator.validate(data)
+            e = validator.validate(data, False)
             if not e.is_valid():
                 return HttpResponse(
                     e.get_msg(),
