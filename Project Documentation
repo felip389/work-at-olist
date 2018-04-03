@@ -13,6 +13,10 @@ output will be calculated with "America/Sao_Paulo" timezone.
     There are some ids reserved for automated tests:
     -id: from 0 to 100 are reserved for system testing
     -call_id: from 0 to 50 are reserved for system testing
+    It was considered on this project that there is no "ringing" signal,
+therefore any "start" signal will block either source and destination numbers
+for new calls.
+
 
 API
 
@@ -43,7 +47,7 @@ should be installed. Those are:
 
     On psql a table named 'callbilling' should be created and a user to be
 used to access this table through django framework (configurable under work-
-at-olist/callBilling/settings.py DATABASES). Ex (used access on dev).:
+at-olist/.env). Ex (used access on dev).:
 
 DATABASES = {
     'default': {

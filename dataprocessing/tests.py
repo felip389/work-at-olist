@@ -118,8 +118,8 @@ def shell_test_signaling_validator():
         callType="Start",
         call_id=10,
         timestamp="2018-01-01 08:37:35-03:00",
-        source='12345678901',
-        destination='09876543210'
+        source='12345678902',
+        destination='09876543211'
     )
     data_to_add.save()
 
@@ -129,8 +129,8 @@ def shell_test_signaling_validator():
         callType="Start",
         call_id=11,
         timestamp="2018-01-01 08:37:35-03:00",
-        source='12345678901',
-        destination='09876543210'
+        source='12345678902',
+        destination='09876543212'
     )
     data_to_add.save()
     data_to_add = CallRecordSignal(
@@ -138,8 +138,8 @@ def shell_test_signaling_validator():
         callType="End",
         call_id=11,
         timestamp="2018-01-01 09:37:35-03:00",
-        source='12345678901',
-        destination='09876543210'
+        source='12345678902',
+        destination='09876543212'
     )
     data_to_add.save()
 
@@ -149,8 +149,19 @@ def shell_test_signaling_validator():
         callType="Start",
         call_id=12,
         timestamp="2018-01-01 08:37:35-03:00",
-        source='11111111111',
+        source='1111111111',
         destination='09876543210'
+    )
+    data_to_add.save()
+
+    # call_id 13 = started call
+    data_to_add = CallRecordSignal(
+        id=14,
+        callType="Start",
+        call_id=13,
+        timestamp="2018-01-01 08:37:35-03:00",
+        source='12345678902',
+        destination='2222222222'
     )
     data_to_add.save()
 
@@ -500,7 +511,7 @@ def shell_test_signaling_validator():
     data = {
         'id': 1,
         'callType': "End",
-        'call_id': 12,
+        'call_id': 9,
         'timestamp': "2018-01-01 18:37:35-03:00",
         'source': "12345678901",
         'destination': "98765432109"
@@ -813,7 +824,92 @@ def shell_test_signaling_validator():
     print("Should be %s" % should_be_valid)
     if should_be_valid != err.is_valid():
         error_count += 1
+
     print("")
+    print("/-------------------------------/")
+    print("")
+
+    # validating timestamp field
+    print("7 - Validating ongoing calls check.\n")
+
+    # existing ongoing call for destination number on source
+    should_be_valid = False
+    data = {
+        'id': 1,
+        'callType': "Start",
+        'call_id': 1,
+        'timestamp': "2018-01-01 00:37:35-03:00",
+        'source': "2222222222",
+        'destination': "98765432109"
+    }
+    err = validator.validate(data, True)
+    print("7.1 - Existing ongoing call for destination number on source.")
+    print("Is valid? %s" % err.is_valid())
+    if not err.is_valid():
+        print("Error message: %s" % err.get_msg())
+    print("Should be %s" % should_be_valid)
+    if should_be_valid != err.is_valid():
+        error_count += 1
+    print("")
+
+    # existing ongoing call for source number on source
+    should_be_valid = False
+    data = {
+        'id': 1,
+        'callType': "Start",
+        'call_id': 1,
+        'timestamp': "2018-01-01 00:37:35-03:00",
+        'source': "1111111111",
+        'destination': "98765432109"
+    }
+    err = validator.validate(data, True)
+    print("7.2 - Existing ongoing call for source number on source.")
+    print("Is valid? %s" % err.is_valid())
+    if not err.is_valid():
+        print("Error message: %s" % err.get_msg())
+    print("Should be %s" % should_be_valid)
+    if should_be_valid != err.is_valid():
+        error_count += 1
+    print("")
+
+    # existing ongoing call for destination number on destination
+    should_be_valid = False
+    data = {
+        'id': 1,
+        'callType': "Start",
+        'call_id': 1,
+        'timestamp': "2018-01-01 00:37:35-03:00",
+        'source': "12345678903",
+        'destination': "2222222222"
+    }
+    err = validator.validate(data, True)
+    print("7.3 - Existing ongoing call for destination number on destination.")
+    print("Is valid? %s" % err.is_valid())
+    if not err.is_valid():
+        print("Error message: %s" % err.get_msg())
+    print("Should be %s" % should_be_valid)
+    if should_be_valid != err.is_valid():
+        error_count += 1
+    print("")
+
+    # existing ongoing call for source number on destination
+    should_be_valid = False
+    data = {
+        'id': 1,
+        'callType': "Start",
+        'call_id': 1,
+        'timestamp': "2018-01-01 00:37:35-03:00",
+        'source': "12345678903",
+        'destination': "1111111111"
+    }
+    err = validator.validate(data, True)
+    print("7.4 - Existing ongoing call for source number on destination.")
+    print("Is valid? %s" % err.is_valid())
+    if not err.is_valid():
+        print("Error message: %s" % err.get_msg())
+    print("Should be %s" % should_be_valid)
+    if should_be_valid != err.is_valid():
+        error_count += 1
 
     print("")
     print("/-------------------------------/")

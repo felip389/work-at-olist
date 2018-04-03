@@ -199,5 +199,78 @@ class SignalValidator:
                     )
                     return e
 
+        # checks if number has an ongoing call
+        if call_type in 'Start':
+            source = data.get(source_name)
+            ongoing_call_id = self.check_number_is_in_call(source)
+            if ongoing_call_id is None:
+                ongoing_call_id = 0
+            if ongoing_call_id > 0:
+                msg = "there is an ongoing call for source number "
+                msg += "- call_id " + str(ongoing_call_id)
+                e.set_result(
+                    msg,
+                    400,
+                    False
+                )
+                return e
+            destination = data.get(destination_name)
+            ongoing_call_id = self.check_number_is_in_call(destination)
+            if ongoing_call_id is None:
+                ongoing_call_id = 0
+            if ongoing_call_id > 0:
+                msg = "there is an ongoing call for destination number "
+                msg += "- call_id " + str(ongoing_call_id)
+                e.set_result(
+                    msg,
+                    400,
+                    False
+                )
+                return e
+
         e.set_result('signaling success', 201, True)
         return e
+
+    def check_number_is_in_call(self, number):
+
+        ongoing_call_id = 0
+
+        number_calling = CallRecordSignal.objects.filter(
+            callType='Start',
+            source=number
+        )
+        number_called = CallRecordSignal.objects.filter(
+            callType='Start',
+            destination=number
+        )
+        number_last_calls = []
+        if number_calling.count() > 0:
+            number_last_calls.append(number_calling.order_by('-timestamp').first())
+
+        if number_called.count() > 0:
+            number_last_calls.append(number_called.order_by('-timestamp').first())
+
+        if len(number_last_calls) == 1:
+            ongoing_call_id = number_last_calls[0].call_id
+            end_call_signal = CallRecordSignal.objects.filter(
+                callType='End',
+                call_id=ongoing_call_id
+            )
+            if end_call_signal.count() > 0:
+                ongoing_call_id = 0
+        elif len(number_last_calls) > 1:
+            ts0 = number_last_calls[0].timestamp
+            ts1 = number_last_calls[1].timestamp
+            if ts0 > ts1:
+                ongoing_call_id = number_last_calls[0].call_id
+            else:
+                ongoing_call_id = number_last_calls[1].call_id
+            end_call_signal = CallRecordSignal.objects.filter(
+                callType='End',
+                call_id=ongoing_call_id
+            )
+            if end_call_signal.count() > 0:
+                ongoing_call_id = 0
+
+        return ongoing_call_id
+

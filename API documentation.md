@@ -106,6 +106,16 @@
   OR
 
   * **Code:** 400 Bad Request <br/>
+    **Content:** 'there is an ongoing call for source number - call_id <call_id>'
+
+  OR
+
+  * **Code:** 400 Bad Request <br/>
+    **Content:** 'there is an ongoing call for destination number - call_id <call_id>'
+
+  OR
+
+  * **Code:** 400 Bad Request <br/>
     **Content:** 'timing error call timing error, cannot signal
     call end with a timestamp earlier than call start'
 
