@@ -27,6 +27,10 @@ API
     Billing
 
     <host>/billing/bill
+    
+    Admin
+
+    <host>/admin
 
 
 Installing
