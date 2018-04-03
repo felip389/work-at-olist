@@ -6,7 +6,7 @@ class CallRecordSignalSerializer(serializers.ModelSerializer):
     class Meta:
         model = CallRecordSignal
         fields = (
-            'recordId',
+            'id',
             'callType',
             'call_id',
             'timestamp',

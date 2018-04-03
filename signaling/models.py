@@ -10,7 +10,7 @@ STYLE_CHOICES = sorted((item, item) for item in get_all_styles())
 # Create your models here.
 
 class CallRecordSignal(models.Model):
-    recordId = models.IntegerField(default=0)
+    id = models.IntegerField(default=0, primary_key=True)
     callType = models.CharField(max_length=5, default='')
     call_id = models.IntegerField(default=0)
     timestamp = models.DateTimeField()
@@ -19,5 +19,5 @@ class CallRecordSignal(models.Model):
 
     class Meta:
         ordering = (
-            'recordId',
+            'id',
         )

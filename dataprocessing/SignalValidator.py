@@ -17,7 +17,7 @@ class SignalValidator:
 
 
         # input block validation
-        # recordId field validation
+        # id field validation
         record_id = data.get(record_id_name)
         try:
             record_id = int(record_id)
@@ -30,8 +30,16 @@ class SignalValidator:
             return e
 
         signal = CallRecordSignal.objects.filter(
-            recordId=record_id
+            id=record_id
         )
+        if record_id < 0:
+            e.set_result(
+                'id error - input id is not positive',
+                400,
+                False
+            )
+            return e
+
         if signal.count() is not 0:
             e.set_result(
                 'id error - an id already exists',
@@ -73,6 +81,13 @@ class SignalValidator:
         except ValueError:
             e.set_result(
                 'call_id error - input call_id is not a number',
+                400,
+                False
+            )
+            return e
+        if call_id < 0:
+            e.set_result(
+                'call_id error - input call_id is negative',
                 400,
                 False
             )
@@ -134,8 +149,8 @@ class SignalValidator:
 
         # source and destination fields validation
         if call_type in 'Start':
-            src_re = re.match(r'\d{10,11}', data.get(source_name))
-            dst_re = re.match(r'\d{10,11}', data.get(destination_name))
+            src_re = re.match(r'^\d{10,11}$', data.get(source_name))
+            dst_re = re.match(r'^\d{10,11}$', data.get(destination_name))
             if src_re is None:
                 e.set_result(
                     'source error - Invalid source',

@@ -58,25 +58,30 @@ DATABASES = {
 
 Testing
 
-    There is an automated test for the bill calculations algorithm, to run it
-go to the project main folder '../work-at-olist/' and run:
+    There are automated tests for the bill calculations algorithm, and for the
+signaling validation. Go to the project main folder '../work-at-olist/' and run:
 
-sudo python3 manage.py shell
->> from dataprocessing import tests
->> testes.shell_test_calculate_bill()
+    For billing algorithm:
+        sudo python3 manage.py shell
+        >> from dataprocessing import tests
+        >> testes.shell_test_calculate_bill()
 
+    for signaling validation algorithm:
+        sudo python3 manage.py shell
+        >> from dataprocessing import tests
+        >> testes.shell_test_signaling_validator()
 
 Fields validation
 
     Signaling payload
 
-    -id: must be an integer, and each given id must be unique, system will check
-    database for each given id for duplicates. Values within 0 and 100 are reser-
-    ved for automated testing.
+    -id: must be a positive integer, and each given id must be unique, system
+    will check database for each given id for duplicates. Values within 0 and
+    100 are reserved for automated testing.
     -callType: must be a string, and system will check for 2 types, "Start" and
     "End" exactly.
-    -call_id: must be an integer, and it is an id which represents the call
-    itself. For a same call_id, the signaling will be accepted if:
+    -call_id: must be a positive integer, and it is an id which represents the
+    call itself. For a same call_id, the signaling will be accepted if:
         1- callType is "Start" and call_id was not initiated;
         2- callType is "End" and there is another signal with same call_id and
         callType "Start"
