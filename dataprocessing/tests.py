@@ -2,7 +2,7 @@ from dataprocessing.CallDetails import CallDetails
 from dataprocessing.BillCalculator import BillCalculator
 from dataprocessing.SignalValidator import SignalValidator
 from datetime import datetime
-from pytz import timezone
+from pytz import timezone, utc
 
 from signaling.models import CallRecordSignal
 
@@ -10,7 +10,7 @@ from signaling.models import CallRecordSignal
 def shell_test_calculate_bill():
     tz = timezone('America/Sao_Paulo')
     bill_calc = BillCalculator()
-    bill_calc.set_tz(tz)
+    bill_calc.set_tz(utc)
 
     source = '1234567891'
     destination = '9876543219'
@@ -21,11 +21,11 @@ def shell_test_calculate_bill():
     # 0.36 + 30*0.09 = 3.06
     real_price.append(3.06)
     call_id = 0
-    start = datetime(2018, 3, 21, 12, 0, 0, 0, tz)
-    end = datetime(2018, 3, 21, 12, 30, 0, 0, tz)
+    start = datetime(2018, 3, 21, 15, 0, 0, 0, utc)
+    end = datetime(2018, 3, 21, 15, 30, 0, 0, utc)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination, tz)
+    cd_aux.set_values(call_id, start, end, source, destination)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
@@ -33,11 +33,11 @@ def shell_test_calculate_bill():
     # 0.36 + 90*0.09 = 8.46
     real_price.append(8.46)
     call_id = 1
-    start = datetime(2018, 3, 21, 12, 0, 0, 0, tz)
-    end = datetime(2018, 3, 21, 13, 30, 0, 0, tz)
+    start = datetime(2018, 3, 21, 15, 0, 0, 0, utc)
+    end = datetime(2018, 3, 21, 16, 30, 0, 0, utc)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination, tz)
+    cd_aux.set_values(call_id, start, end, source, destination)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
@@ -45,23 +45,23 @@ def shell_test_calculate_bill():
     # 0.36 + 15*0.09 = 1.71
     real_price.append(1.71)
     call_id = 2
-    start = datetime(2018, 3, 21, 21, 45, 0, 0, tz)
-    end = datetime(2018, 3, 21, 22, 15, 0, 0, tz)
+    start = datetime(2018, 3, 22, 0, 45, 0, 0, utc)
+    end = datetime(2018, 3, 22, 1, 15, 0, 0, utc)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination, tz)
+    cd_aux.set_values(call_id, start, end, source, destination)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
-    # call starts one day and finishes another on reduced tariff
+    # call starts and finishes on reduced tariff
     # 0.36 + 0 = 0.36
     real_price.append(0.36)
     call_id = 3
-    start = datetime(2018, 3, 21, 23, 0, 0, 0, tz)
-    end = datetime(2018, 3, 22, 0, 30, 0, 0, tz)
+    start = datetime(2018, 3, 22, 2, 0, 0, 0, utc)
+    end = datetime(2018, 3, 22, 6, 30, 0, 0, utc)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination, tz)
+    cd_aux.set_values(call_id, start, end, source, destination)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
@@ -69,11 +69,23 @@ def shell_test_calculate_bill():
     # 0.36 + 86.40 = 86.76
     real_price.append(86.76)
     call_id = 4
-    start = datetime(2018, 3, 21, 23, 0, 0, 0, tz)
-    end = datetime(2018, 3, 23, 0, 30, 0, 0, tz)
+    start = datetime(2018, 3, 22, 2, 0, 0, 0, utc)
+    end = datetime(2018, 3, 23, 1, 30, 0, 0, utc)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination, tz)
+    cd_aux.set_values(call_id, start, end, source, destination)
+    cd_aux.set_valid()
+    cd_list.append(cd_aux)
+
+    # call starts one day and finishes another
+    # 0.36 + 35.10 = 35.46
+    real_price.append(35.46)
+    call_id = 5
+    start = datetime(2018, 1, 8, 1, 30, 0, 0, utc)
+    end = datetime(2018, 1, 8, 15, 30, 0, 0, utc)
+
+    cd_aux = CallDetails()
+    cd_aux.set_values(call_id, start, end, source, destination)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 

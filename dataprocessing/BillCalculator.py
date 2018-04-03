@@ -1,6 +1,6 @@
 from signaling.models import CallRecordSignal
 import re
-from pytz import timezone
+from pytz import timezone, utc
 from dataprocessing.CallDetails import CallDetails
 from datetime import datetime, timedelta
 
@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 class BillCalculator:
 
     def __init__(self):
-        self.tz = timezone('America/Sao_Paulo')
+        self.tz = utc
 
     def set_tz(self, tz):
         self.tz = tz
@@ -139,14 +139,7 @@ class BillCalculator:
                 continue
 
             call_details_it = CallDetails()
-            call_details_it.set_values(
-                i,
-                start,
-                end,
-                source,
-                destination,
-                self.tz
-            )
+            call_details_it.set_values(i, start, end, source, destination)
             call_details_it.set_valid()
             call_details_list.append(call_details_it)
 
@@ -154,8 +147,10 @@ class BillCalculator:
 
     def calculate_bill(self, call_details_list):
 
-        standard_call_charge_time = 6
-        reduced_call_charge_time = 22
+        # django saves timestamps in UTC, so, lets convert time to UTC
+
+        reduced_call_charge_time = 1
+        standard_call_charge_time = 9
         standard_call_charge_hourly = 0.09
         reduced_call_charge_hourly = 0
         standing_charge = 0.36
@@ -170,15 +165,7 @@ class BillCalculator:
                 i = 0
                 while time_iterator < time_stop:
                     if time_iterator.day == time_stop.day:
-                        if time_iterator.hour < standard_call_charge_time:
-                            aux_call_charge = reduced_call_charge_hourly
-                            if time_stop.hour < standard_call_charge_time:
-                                aux_call_charge_hour = time_stop.hour
-                                aux_call_charge_minute = time_stop.minute
-                            else:
-                                aux_call_charge_hour = standard_call_charge_time
-                                aux_call_charge_minute = 0
-                        elif time_iterator.hour < reduced_call_charge_time:
+                        if time_iterator.hour < reduced_call_charge_time:
                             aux_call_charge = standard_call_charge_hourly
                             if time_stop.hour < reduced_call_charge_time:
                                 aux_call_charge_hour = time_stop.hour
@@ -186,19 +173,27 @@ class BillCalculator:
                             else:
                                 aux_call_charge_hour = reduced_call_charge_time
                                 aux_call_charge_minute = 0
-                        else:
+                        elif time_iterator.hour < standard_call_charge_time:
                             aux_call_charge = reduced_call_charge_hourly
+                            if time_stop.hour < standard_call_charge_time:
+                                aux_call_charge_hour = time_stop.hour
+                                aux_call_charge_minute = time_stop.minute
+                            else:
+                                aux_call_charge_hour = standard_call_charge_time
+                                aux_call_charge_minute = 0
+                        else:
+                            aux_call_charge = standard_call_charge_hourly
                             aux_call_charge_hour = time_stop.hour
                             aux_call_charge_minute = time_stop.minute
                     else:
-                        if time_iterator.hour < standard_call_charge_time:
-                            aux_call_charge = reduced_call_charge_hourly
-                            aux_call_charge_hour = standard_call_charge_time
-                        elif time_iterator.hour < reduced_call_charge_time:
+                        if time_iterator.hour < reduced_call_charge_time:
                             aux_call_charge = standard_call_charge_hourly
                             aux_call_charge_hour = reduced_call_charge_time
-                        else:
+                        elif time_iterator.hour < standard_call_charge_time:
                             aux_call_charge = reduced_call_charge_hourly
+                            aux_call_charge_hour = standard_call_charge_time
+                        else:
+                            aux_call_charge = standard_call_charge_hourly
                             aux_call_charge_hour = 0
                             day_iterator += 1
                         aux_call_charge_minute = 0

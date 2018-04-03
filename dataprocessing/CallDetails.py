@@ -11,11 +11,12 @@ class CallDetails:
         self.destination = 0
         self.call_price = 0
         self.time = 0
+        self.tz = pytz.timezone('America/Sao_Paulo')
 
-    def set_values(self, call_id, start, end, source, destination, tz):
+    def set_values(self, call_id, start, end, source, destination):
         self.call_id = call_id
-        self.start = start.astimezone(tz) - start.astimezone(tz).dst()
-        self.end = end.astimezone(tz) - end.astimezone(tz).dst()
+        self.start = start
+        self.end = end
         self.source = source
         self.destination = destination
 
@@ -68,10 +69,12 @@ class CallDetails:
         return string
 
     def get_date(self):
-        string = str(self.start.year) + '-' + str(self.start.month)
-        string += '-' + str(self.start.day)
+        brdt = self.start.astimezone(self.tz)
+        string = str(brdt.year) + '-' + str(brdt.month)
+        string += '-' + str(brdt.day)
         return string
 
     def get_time(self):
-        string = str(self.start.hour) + ':' + str(self.start.minute)
+        brdt = self.start.astimezone(self.tz)
+        string = str(brdt.hour) + ':' + str(brdt.minute)
         return string
