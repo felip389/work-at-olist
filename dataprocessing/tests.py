@@ -25,7 +25,7 @@ def shell_test_calculate_bill():
     end = datetime(2018, 3, 21, 12, 30, 0, 0, tz)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination)
+    cd_aux.set_values(call_id, start, end, source, destination, tz)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
@@ -37,7 +37,7 @@ def shell_test_calculate_bill():
     end = datetime(2018, 3, 21, 13, 30, 0, 0, tz)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination)
+    cd_aux.set_values(call_id, start, end, source, destination, tz)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
@@ -49,7 +49,7 @@ def shell_test_calculate_bill():
     end = datetime(2018, 3, 21, 22, 15, 0, 0, tz)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination)
+    cd_aux.set_values(call_id, start, end, source, destination, tz)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
@@ -61,7 +61,7 @@ def shell_test_calculate_bill():
     end = datetime(2018, 3, 22, 0, 30, 0, 0, tz)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination)
+    cd_aux.set_values(call_id, start, end, source, destination, tz)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 
@@ -73,7 +73,7 @@ def shell_test_calculate_bill():
     end = datetime(2018, 3, 23, 0, 30, 0, 0, tz)
 
     cd_aux = CallDetails()
-    cd_aux.set_values(call_id, start, end, source, destination)
+    cd_aux.set_values(call_id, start, end, source, destination, tz)
     cd_aux.set_valid()
     cd_list.append(cd_aux)
 

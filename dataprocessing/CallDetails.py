@@ -1,4 +1,4 @@
-
+import pytz
 
 class CallDetails:
     def __init__(self):
@@ -12,10 +12,10 @@ class CallDetails:
         self.call_price = 0
         self.time = 0
 
-    def set_values(self, call_id, start, end, source, destination):
+    def set_values(self, call_id, start, end, source, destination, tz):
         self.call_id = call_id
-        self.start = start
-        self.end = end
+        self.start = start.astimezone(tz) - start.astimezone(tz).dst()
+        self.end = end.astimezone(tz) - end.astimezone(tz).dst()
         self.source = source
         self.destination = destination
 

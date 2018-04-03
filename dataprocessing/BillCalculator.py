@@ -139,7 +139,14 @@ class BillCalculator:
                 continue
 
             call_details_it = CallDetails()
-            call_details_it.set_values(i, start, end, source, destination)
+            call_details_it.set_values(
+                i,
+                start,
+                end,
+                source,
+                destination,
+                self.tz
+            )
             call_details_it.set_valid()
             call_details_list.append(call_details_it)
 
